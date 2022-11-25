@@ -19,29 +19,30 @@ class Program(QWidget):
 
     def start_paint(self):
         self.do_paint = True
-        self.paintEvent(1)
+        self.repaint(self.rect())
 
-    def draw_circles(self):
+    def draw_circles(self, qp):
         for i in range(randint(5, 15)):
-            self.draw_circle()
+            self.draw_circle(qp)
 
     def paintEvent(self, event):
         if self.do_paint:
-            self.painters.append(QPainter())
-            self.painters[-1].begin(self)
-            self.draw_circles()
-            self.painters[-1].end()
+            qp = QPainter()
+            qp.begin(self)
+            self.draw_circles(qp)
+            qp.end()
             self.do_paint = False
     
-    def draw_circle(self):
+    def draw_circle(self, qp):
         
-        self.painters[-1].setBrush(QColor('yellow'))
-        xc, yc = randint(50, 550), randint(50, 650)
+        qp.setBrush(QColor('yellow'))
+        a, b = self.geometry().getRect()[2:4]
+        xc, yc = randint(50, a - 30), randint(50, b - 30)
         try:
-            d = randint(5, min(min(xc, 570 - xc), min(yc, 650 - yc)))
+            d = randint(5, min(min(xc, a - xc), min(yc, b - yc)))
         except ValueError:
             d = 1
-        self.painters[-1].drawEllipse(QPoint(xc, yc), d, d)
+        qp.drawEllipse(QPoint(xc, yc), d, d)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
